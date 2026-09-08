@@ -1,0 +1,55 @@
+# Created by Main Street Media Co. on 2026-09-08 for MSM-BidMeasure.
+# Protects Apache-2.0 and upstream attribution requirements in this derivative fork.
+name: MSM Fork Compliance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  attribution-and-identity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Apache-2.0 license preservation
+        run: |
+          set -euo pipefail
+          grep -q "Apache License" LICENSE
+          grep -q "Version 2.0" LICENSE
+          grep -q "Copyright 2026 Kentucky AI and the OpenTakeoff contributors" LICENSE
+
+      - name: Verify NOTICE preserves upstream and MSM attribution
+        run: |
+          set -euo pipefail
+          grep -q "Copyright 2026 Main Street Media Co." NOTICE
+          grep -q "Copyright 2026 Kentucky AI and the OpenTakeoff contributors" NOTICE
+          grep -q "https://github.com/Kentucky-ai/opentakeoff" NOTICE
+
+      - name: Verify modification record exists
+        run: |
+          set -euo pipefail
+          grep -q "MSM-BidMeasure modification record" MODIFICATIONS.md
+          grep -q "37b7f1cbcb229476a9c50c5e1cbd927af5eb589f" MODIFICATIONS.md
+
+      - name: Verify fork package identity
+        run: |
+          set -euo pipefail
+          test "$(jq -r .name package.json)" = "msm-bidmeasure"
+          test "$(jq -r .license package.json)" = "Apache-2.0"
+          test "$(jq -r .name web/package.json)" = "msm-bidmeasure-web"
+          test "$(jq -r .license web/package.json)" = "Apache-2.0"
+
+      - name: Prevent upstream namespace publishing from the fork
+        run: |
+          set -euo pipefail
+          if grep -Eq 'npm[[:space:]]+publish|mcp-publisher[[:space:]]+publish' .github/workflows/publish-mcp.yml; then
+            echo "::error file=.github/workflows/publish-mcp.yml::fork workflow must not publish into upstream-owned package or registry namespaces"
+            exit 1
+          fi

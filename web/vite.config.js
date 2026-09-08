@@ -1,3 +1,7 @@
+// Modified by Main Street Media Co. on 2026-09-08 for MSM-BidMeasure.
+// Derived from OpenTakeoff by Kentucky AI and the OpenTakeoff contributors.
+// Apache-2.0 license and upstream attribution are preserved in LICENSE and NOTICE.
+
 import { readFileSync } from "node:fs";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
@@ -8,27 +12,21 @@ import react from "@vitejs/plugin-react";
 // runner (no Vite, no define) sees plain undefined instead of a crash.
 const pkg = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8"));
 
-// OpenTakeoff is a client-only static app: the takeoff canvas runs entirely in
-// the browser (pdf.js + canvas + the geometry libs), persists to IndexedDB /
-// localStorage, and builds to a static `dist/` you can host anywhere (GitHub
-// Pages, Vercel, Netlify, an S3 bucket).
+// MSM-BidMeasure remains a client-only static app: the takeoff canvas runs in
+// the browser (pdf.js + canvas + geometry libs), persists to IndexedDB /
+// localStorage, and builds to static dist/. VITE_BASE_PATH lets the same build
+// run at `/` locally or under the GitHub Pages `/MSM-BidMeasure/` project path.
 //
 // The `/ai` proxy is OPTIONAL — it only matters if you run the bring-your-own-
-// model AI sandbox in `../server` (see server/README.md). Without it, the app
-// works fully; the AI hooks just stay dormant.
+// model AI sandbox in `../server`. Without it, the primary takeoff app works.
 export default defineConfig({
+  base: process.env.VITE_BASE_PATH || "/",
   plugins: [react()],
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
-  // The STT worker (stt.worker.ts, RFC #59) lazy-imports its engine adapter,
-  // which needs code-splitting inside the worker bundle — only the ES format
-  // supports that (Vite's default iife errors on split worker builds).
   worker: { format: "es" },
   server: {
     port: 5173,
     proxy: {
-      // The sandbox's /ai routes are key-locked (server/README.md). Export the
-      // same OT_SANDBOX_API_KEY in the shell running `npm run dev` and the
-      // proxy stamps the header on — the browser never handles the secret.
       "/ai": {
         target: "http://localhost:8000",
         headers: process.env.OT_SANDBOX_API_KEY

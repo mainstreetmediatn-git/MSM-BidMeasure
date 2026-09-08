@@ -1,0 +1,54 @@
+# Modified/created by Main Street Media Co. on 2026-09-08 for MSM-BidMeasure.
+# Apache-2.0 derivative of OpenTakeoff; see LICENSE, NOTICE, MODIFICATIONS.md.
+name: Deploy MSM-BidMeasure Demo
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: msm-bidmeasure-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.repository == 'mainstreetmediatn-git/MSM-BidMeasure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install browser dependencies
+        working-directory: web
+        run: npm ci --no-audit --no-fund
+      - name: Build MSM-BidMeasure
+        working-directory: web
+        env:
+          VITE_BASE_PATH: /MSM-BidMeasure/
+        run: npm run build
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    if: github.repository == 'mainstreetmediatn-git/MSM-BidMeasure'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
