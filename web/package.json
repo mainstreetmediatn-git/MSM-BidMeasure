@@ -1,10 +1,19 @@
 {
-  "name": "opentakeoff-web",
+  "name": "msm-bidmeasure-web",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "OpenTakeoff — a free, open-source PDF takeoff canvas for flooring contractors.",
+  "description": "MSM-BidMeasure — Main Street Media Co.'s Apache-2.0 browser-based construction takeoff and bid measurement application.",
   "license": "Apache-2.0",
+  "author": "Main Street Media Co.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mainstreetmediatn-git/MSM-BidMeasure.git",
+    "directory": "web"
+  },
+  "homepage": "https://mainstreetmediatn-git.github.io/MSM-BidMeasure/",
+  "x-derived-from": "OpenTakeoff by Kentucky AI and the OpenTakeoff contributors",
+  "x-msm-modification": "Modified 2026-09-08 by Main Street Media Co.: package identity and presentation metadata rebranded for MSM-BidMeasure; Apache-2.0 and upstream attribution preserved.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
