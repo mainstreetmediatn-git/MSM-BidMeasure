@@ -1,0 +1,23 @@
+{
+  "name": "msm-bidmeasure",
+  "version": "0.1.0-msm.1",
+  "private": true,
+  "description": "MSM-BidMeasure — Main Street Media Co.'s Apache-2.0 construction takeoff and bid-measurement fork of OpenTakeoff.",
+  "license": "Apache-2.0",
+  "author": "Main Street Media Co.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mainstreetmediatn-git/MSM-BidMeasure.git"
+  },
+  "homepage": "https://mainstreetmediatn-git.github.io/MSM-BidMeasure/",
+  "scripts": {
+    "web:dev": "npm --prefix web run dev",
+    "web:check": "npm --prefix web run check",
+    "web:build": "npm --prefix web run build",
+    "mcp:test": "npm --prefix mcp test",
+    "mcp:build": "npm --prefix mcp run build"
+  },
+  "x-derived-from": "OpenTakeoff by Kentucky AI and the OpenTakeoff contributors",
+  "x-upstream": "https://github.com/Kentucky-ai/opentakeoff",
+  "x-msm-modification": "Created 2026-09-08 by Main Street Media Co. as the fork-level package identity for MSM-BidMeasure."
+}
